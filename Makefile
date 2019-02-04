@@ -45,47 +45,68 @@ FILFILES += $(wildcard style/*.lua)
 FILTERS := $(foreach FILFILES, $(FILFILES), --filter $(FILFILES))
 TEXFLAGS = -F pandoc-crossref -F pandoc-citeproc --pdf-engine=xelatex
 
-
 ifneq ("$(wildcard style/Makefile)","")
 	include style/Makefile
-else ifneq ("$(wildcard style/template.tex)","")
+endif
+ifneq ("$(wildcard style/template.tex)","")
 	TEXTEMPLATE := "--template=style/template.tex"
-else ifneq ("$(wildcard style/reference.docx)","")
-	DOCXTEMPLATE := "--reference-doc=style/reference.docx"
-else  ifneq ("$(wildcard style/style.css)","")
+endif
+ifneq ("$(wildcard style/reference.docx)","")
+	DOCXTEMPLATE := "--reference-docx=style/reference.docx"
+endif
+ifneq ("$(wildcard style/template.html)","")
+	HTMLTEMPLATE := "--template=style/template.html"
+endif
+ifneq ("$(wildcard style/template.epub)","")
+	EPUBTEMPLATE := "--template=style/template.epub"
+endif
+ifneq ("$(wildcard style/preamble.tex)","")
+	TEXPREAMBLE := "--include-in-header=style/preamble.tex"
+endif
+ifneq ("$(wildcard style/epub.css)","")
+	EPUBSTYLE := "--epub-stylesheet=style/epub.css"
+endif
+ifneq ("$(wildcard style/style.css)","")
 	CSS := "--include-in-header=style/style.css"
 endif
-
+ifneq ("$(wildcard style/citation.csl)","")
+	CSL := "--csl=style/citation.csl"
+endif
 
 help:
 	@echo "$$INFORMATION"
 
 all : tex docx html5 epub pdf
 
-
+pdf: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 pdf: $(PDF)
 $(PDF): $(MD)
-	pandoc -o $@ source/*.md $(TEXTEMPLATE) $(TEXFLAGS) $(FILTERS) 2>output/pdf.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) $(FILTERS) 2>output/pdf.log
 
+tex: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 tex: $(TEX)
 $(TEX): $(MD)
-	pandoc -o $@ source/*.md $(TEXFLAGS) 2>output/tex.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/tex.log
 
+docx: DYNAMICFLAGS = $(DOCXTEMPLATE) $(CSL)
 docx: $(DOCX)
 $(DOCX): $(MD)
-	pandoc -o $@ source/*.md $(TEXFLAGS) $(DOCXTEMPLATE) --toc 2>output/docx.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) --toc 2>output/docx.log
 
+html5: DYNAMICFLAGS = $(HTMLTEMPLATE) $(CSS) $(CSL)
 html5: $(HTML5)
 $(HTML5): $(MD)
-	pandoc -o $@ source/*.md $(CSS) $(TEXFLAGS) --toc -t html5 2>output/html5.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) --toc -t html5 2>output/html5.log
 
+epub: DYNAMICFLAGS = $(EPUBSTYLE) $(EPUBTEMPLATE) $(CSL)
 epub: $(EPUB)
 $(EPUB): $(MD)
-	pandoc -o $@ source/*.md $(TEXFLAGS) --toc 2>output/epub.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) --toc 2>output/epub.log
 
+tex: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 beamer: $(BEAMER)
 $(BEAMER): $(MD)
-	pandoc -o $@ source/*.md $(TEXFLAGS) -t beamer 2>output/beamer.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) -t beamer 2>output/beamer.log
 
 prepare:
 	command -v xetex >/dev/null 2>&1 || { echo "Latex is not installed.  Please run make prepare-latex for a minimal installation." >&2; exit 1; }
