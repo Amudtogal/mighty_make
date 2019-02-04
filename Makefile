@@ -136,6 +136,6 @@ update-testing-branch:
 	wget http://tiny.cc/mighty_test -O Makefile
 
 clean:
-	rm -f "output/" *.md *.html *.pdf *.tex *.docx *.epub
+	rm -f output/*.{md,html,tex,docx,pdf,epub}
 
 .PHONY: help prepare update beamer clean
