@@ -33,6 +33,8 @@ SHELL = /bin/bash
 MD = $(wildcard source/*.md)
 PDF = output/$(notdir $(CURDIR)).pdf
 TEX = output/$(notdir $(CURDIR)).tex
+DIFFTEX = output/$(notdir $(CURDIR))_diff.tex
+DIFFMD = output/$(notdir $(CURDIR))_diff.md
 DOCX = output/$(notdir $(CURDIR)).docx
 HTML5 = output/$(notdir $(CURDIR)).html
 EPUB = output/$(notdir $(CURDIR)).epub
@@ -88,6 +90,20 @@ tex: $(TEX)
 $(TEX): $(MD)
 	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/tex.log
 
+difftex: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
+difftex: $(DIFFTEX)
+$(DIFFTEX): $(MD)
+	pandoc -o $@ $(MD) --wrap=none -s --toc $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/tex.log
+	@echo Reviewing "$$REVIEW"
+	pandoc -o output/$(notdir $(CURDIR))_review.tex $(REVIEW) --wrap=none --metadata-file=source/00-metadata.md -s $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/docx.log
+
+diffmd: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
+diffmd: $(DIFFMD)
+$(DIFFMD): $(MD) $(REVIEW)
+	pandoc -o $@ $(MD) --wrap=none -s --toc $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/md.log
+	@echo Reviewing "$$REVIEW"
+	pandoc -o output/$(notdir $(CURDIR))_review.md $(REVIEW) --track-changes=all --wrap=none --metadata-file=source/00-metadata.md -s $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/docx.log
+
 docx: DYNAMICFLAGS = $(DOCXTEMPLATE) $(CSL)
 docx: $(DOCX)
 $(DOCX): $(MD)
@@ -116,8 +132,9 @@ prepare:
 	command -v svn >/dev/null 2>&1 || { echo "I require svn but it's not installed.  Aborting." >&2; exit 1; }
 	mkdir "output"
 	mkdir "source"
+	echo -e "---\ntitle: $(notdir $(CURDIR))\n---" > source/00-metadata.md
 	mkdir "style"
-	touch source/00-metadata.md
+	mkdir "reviews"
 
 fetch:
 	command -v svn >/dev/null 2>&1 || { echo "I require svn but it's not installed.  Aborting." >&2; exit 1; }
