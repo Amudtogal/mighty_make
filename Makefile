@@ -12,18 +12,18 @@ make prepare-latex              create a minimal latex install
 make dependencies               tries to fetch all included packages in the project and install them
 make html                       generate a web version
 make pdf                        generate a PDF file
-make docx                       generate a Docx file 			  
+make docx                       generate a Docx file
 make tex                        generate a Latex file
 make beamer                     generate a beamer presentation
 make all                        generate all files
 make fetch THEME=<github addrs> fetch the theme for a template online
 make update                     update the makefile to last version
-make update-testing-branch      update to latest testing version            
+make update-testing-branch      update to latest testing version
 make                            will fallback to PDF
 
 It implies some directories in the filesystem: source, output and style
-It also implies that the bibliography file will be defined via the yaml	  
-Depends on pandoc-citeproc and pandoc-crossref						  
+It also implies that the bibliography file will be defined via the yaml
+Depends on pandoc-citeproc and pandoc-crossref
 endef
 
 export INFORMATION
