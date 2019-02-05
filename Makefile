@@ -91,13 +91,12 @@ all : tex docx html5 epub pdf
 pdf: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 pdf: $(PDF)
 $(PDF): $(MD)
-	pandoc -o $@ $(MD) $(TEXFLAGS) $(DYNAMICFLAGS) $(FILTERS) 2>output/pdf.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) $(FILTERS) 2>output/pdf.log
 
 tex: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 tex: $(TEX)
 $(TEX): $(MD)
-	pandoc -o $@ $(MD) $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/tex.log
-
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) 2>output/tex.log
 
 difftex: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 difftex: $(DIFFTEX)
@@ -116,22 +115,22 @@ $(DIFFMD): $(MD) $(REVIEW)
 docx: DYNAMICFLAGS = $(DOCXTEMPLATE) $(CSL)
 docx: $(DOCX)
 $(DOCX): $(MD)
-	pandoc -o $@ $(MD) $(TEXFLAGS) $(DYNAMICFLAGS) --toc 2>output/docx.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) --toc 2>output/docx.log
 
 html5: DYNAMICFLAGS = $(HTMLTEMPLATE) $(CSS) $(CSL)
 html5: $(HTML5)
 $(HTML5): $(MD)
-	pandoc -o $@ $(MD) $(TEXFLAGS) $(DYNAMICFLAGS) --toc -t html5 2>output/html5.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) --toc -t html5 2>output/html5.log
 
 epub: DYNAMICFLAGS = $(EPUBSTYLE) $(EPUBTEMPLATE) $(CSL)
 epub: $(EPUB)
 $(EPUB): $(MD)
-	pandoc -o $@ $(MD) $(TEXFLAGS) $(DYNAMICFLAGS) --toc 2>output/epub.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) --toc 2>output/epub.log
 
 tex: DYNAMICFLAGS = $(TEXTEMPLATE) $(TEXPREAMBLE) $(CSL)
 beamer: $(BEAMER)
 $(BEAMER): $(MD)
-	pandoc -o $@ $(MD) $(TEXFLAGS) $(DYNAMICFLAGS) -t beamer 2>output/beamer.log
+	pandoc -o $@ source/*.md $(TEXFLAGS) $(DYNAMICFLAGS) -t beamer 2>output/beamer.log
 
 prepare:
 	command -v xetex >/dev/null 2>&1 || { echo "Latex is not installed.  Please run make prepare-latex for a minimal installation." >&2; exit 1; }
