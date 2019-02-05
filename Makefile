@@ -4,19 +4,27 @@
 define INFORMATION
 Makefile for automated typography using pandoc.
 
-Version 1.8
+Version 1.9
 
-Usage:
+Preparations:
 make prepare                    first time use, setting the directories
 make prepare-latex              create a minimal latex install
 make dependencies               tries to fetch all included packages in the project and install them
+make fetch THEME=<github addrs> fetch the theme for a template online
+
+Basic:
 make html                       generate a web version
 make pdf                        generate a PDF file
 make docx                       generate a Docx file
 make tex                        generate a Latex file
 make beamer                     generate a beamer presentation
 make all                        generate all files
-make fetch THEME=<github addrs> fetch the theme for a template online
+
+Tracking differences:
+make difftex REVIEW=<file>.docx create two tex files for difference viewing from a revision file
+make diffmd REVIEW=<file>.docx  create two md files for difference viewing from a revision file
+
+Updating:
 make update                     update the makefile to last version
 make update-testing-branch      update to latest testing version
 make                            will fallback to PDF
