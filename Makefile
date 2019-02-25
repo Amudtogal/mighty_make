@@ -24,6 +24,9 @@ Tracking differences:
 make difftex REVIEW=<file>.docx create two tex files for difference viewing from a revision file
 make diffmd REVIEW=<file>.docx  create two md files for difference viewing from a revision file
 
+Information tools:
+make wordcount					counts the words in the final pdf
+
 Updating:
 make update                     update the makefile to last version
 make update-testing-branch      update to latest testing version
@@ -44,8 +47,7 @@ TEX = output/$(notdir $(CURDIR)).tex
 DIFFTEX = output/$(notdir $(CURDIR))_diff.tex
 DIFFMD = output/$(notdir $(CURDIR))_diff.md
 DOCX = output/$(notdir $(CURDIR)).docx
-HTML5 = output/$(notdir $(CURDIR)).html
-EPUB = output/$(notdir $(CURDIR)).epub
+HTML5 = output/$(notdir $(CURDIR)).html EPUB = output/$(notdir $(CURDIR)).epub
 BEAMER = output/$(notdir $(CURDIR))-presentation.pdf
 PACKAGES = s~^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$$~\1~p
 
@@ -172,6 +174,9 @@ prepare-latex:
 	-scheme scheme-minimal
 	@echo "It's done. Use <tlmgr install PACKAGENAME> to install the packages you need."
 
+wordcount: $(PDF)
+	pdftotext $(PDF) - | wc -w
+
 dependencies:
 	pkexec tlmgr install $$(cat source/*.md | sed -n '$(PACKAGES)' | paste -sd ' ' -) $$(cat style/*.tex | sed -n '$(PACKAGES)' | paste -sd ' ' -)
 
@@ -184,4 +189,4 @@ update-testing-branch:
 clean:
 	rm -f output/*.{md,html,tex,docx,pdf,epub}
 
-.PHONY: help prepare update beamer clean
+.PHONY: help prepare update beamer wordcount clean
