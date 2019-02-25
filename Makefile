@@ -174,7 +174,8 @@ prepare-latex:
 	-scheme scheme-minimal
 	@echo "It's done. Use <tlmgr install PACKAGENAME> to install the packages you need."
 
-wordcount: $(PDF)
+wordcount:
+	make pdf
 	pdftotext $(PDF) - | wc -w
 
 dependencies:
